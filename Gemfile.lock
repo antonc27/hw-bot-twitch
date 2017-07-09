@@ -2,12 +2,16 @@ GEM
   remote: https://rubygems.org/
   specs:
     cinch (2.3.3)
+    httparty (0.14.0)
+      multi_xml (>= 0.5.2)
+    multi_xml (0.6.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   cinch
+  httparty
 
 BUNDLED WITH
    1.14.6

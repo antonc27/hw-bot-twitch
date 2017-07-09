@@ -1,9 +1,10 @@
 require 'cinch'
+require 'httparty'
 
 class HwBot < Cinch::Bot
   TWITCH_OAUTH_TOKEN = '<your bot token>'
   NICKNAME = 'hwgamebot'
-  CHANNEL= '#antonc27'
+  CHANNEL_NAME = 'antonc27'
 
   def initialize(&b)
     super do
@@ -12,7 +13,7 @@ class HwBot < Cinch::Bot
         c.port = 6667
         c.password = 'oauth:' + TWITCH_OAUTH_TOKEN
         c.nick = NICKNAME
-        c.channels = [CHANNEL]
+        c.channels = ["##{CHANNEL_NAME}"]
         c.plugins.plugins = [Hello, TimedPlugin]
       end
     end
@@ -34,7 +35,16 @@ class TimedPlugin
 
   timer 10, method: :timed
   def timed
-    puts "10 seconds have passed"
+    puts '10 seconds have passed'
+    get_chatters
+  end
+
+  def get_chatters
+    url = "https://tmi.twitch.tv/group/user/#{HwBot::CHANNEL_NAME}/chatters"
+    response = HTTParty.get(url)
+    return if response.code != 200
+    json = JSON.parse(response.body)
+    chatters = (json['chatter_count'].to_i > 0) ? json['chatters']['viewers'] : []
+    puts 'Viewers: ' + chatters.to_s
   end
 end
-
